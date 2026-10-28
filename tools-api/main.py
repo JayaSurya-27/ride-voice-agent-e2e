@@ -395,6 +395,16 @@ class RefIn(BaseModel):
     reason: str | None = None
 
 
+@app.post("/get_recent_trips")
+def get_recent_trips(body: RiderIn) -> dict:
+    rows = many(
+        "SELECT booking_ref, pickup_place_id, dropoff_place_id, product_id, status"
+        " FROM bookings WHERE rider_id = %s ORDER BY created_at DESC LIMIT 3",
+        (body.rider_id,),
+    )
+    return {"trips": rows}
+
+
 @app.post("/get_booking_status")
 def get_booking_status(body: RefIn) -> dict:
     b = one("SELECT * FROM bookings WHERE booking_ref = %s", (body.booking_ref,))
