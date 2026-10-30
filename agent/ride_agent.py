@@ -241,22 +241,6 @@ class RideBookingAgent(Agent):
             raise _tool_error(exc) from exc
 
     @function_tool()
-    async def get_driver_details(self) -> dict:
-        """Get the assigned driver's name, vehicle and plate for the confirmed booking."""
-        if not self.state.booking_ref and not self.client.harness_mode:
-            raise ToolError("There is no confirmed booking in this call yet.")
-        try:
-            result = await self.client.call(
-                "get_booking_status", booking_ref=self.state.booking_ref
-            )
-            return {
-                k: result.get(k)
-                for k in ("booking_ref", "driver_name", "vehicle", "plate", "eta_pickup_min")
-            }
-        except Exception as exc:
-            raise _tool_error(exc) from exc
-
-    @function_tool()
     async def get_recent_trips(self) -> dict:
         """Get the caller's last three bookings (refs, places, product and status)."""
         if not self.state.rider_id:
